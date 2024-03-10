@@ -38,7 +38,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
     objects = UserManager()
-
     USERNAME_FIELD = 'email'
+
+
+class MuscleGroup(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Exercise(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    instructions = models.TextField()
+    target_muscles = models.ManyToManyField(MuscleGroup,
+                                            related_name='exercises')
+
+    def __str__(self):
+        return self.name

@@ -3,6 +3,7 @@ Tests for models.
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from core.models import MuscleGroup, Exercise
 
 
 class ModelTests(TestCase):
@@ -46,3 +47,48 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+
+class MuscleGroupModelTests(TestCase):
+
+    def test_muscle_group_str(self):
+        """Test the muscle group string representation"""
+        muscle_group = MuscleGroup.objects.create(
+            name='Biceps',
+            description='Front of the upper arm'
+        )
+        self.assertEqual(str(muscle_group), muscle_group.name)
+
+
+class ExerciseModelTests(TestCase):
+
+    def setUp(self):
+        """Set up for testing"""
+        self.muscle_group = MuscleGroup.objects.create(
+            name='Triceps',
+            description='Back of the upper arm'
+        )
+
+    def test_exercise_str(self):
+        """Test the exercise string representation"""
+        exercise = Exercise.objects.create(
+            name='Tricep Dips',
+            description='Dips to work the triceps',
+            instructions='Perform dips on parallel '
+                         'bars with a focus on the triceps'
+        )
+        exercise.target_muscles.add(self.muscle_group)
+
+        self.assertEqual(str(exercise), exercise.name)
+
+    def test_exercise_target_muscles(self):
+        """Test the target muscles are correctly assigned to exercises"""
+        exercise = Exercise.objects.create(
+            name='Pull-up',
+            description='Upper body compound pull exercise.',
+            instructions='Hang from a bar and pull yourself'
+                         ' up until your chin passes the bar.'
+        )
+        exercise.target_muscles.add(self.muscle_group)
+
+        self.assertIn(self.muscle_group, exercise.target_muscles.all())
