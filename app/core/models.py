@@ -1,6 +1,7 @@
 """
 Database models.
 """
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -59,3 +60,26 @@ class Exercise(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class WorkoutPlan(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='workout_plans')
+    title = models.CharField(max_length=255)
+    frequency = models.IntegerField(help_text='Number of workouts per week')
+    goal = models.TextField(blank=True, null=True)
+    session_duration = models.IntegerField(help_text='Duration of each workout session in minutes')
+    # Total duration in minutes per session
+
+    def __str__(self):
+        return f"{self.title} - {self.user.email}"
+
+
+class WorkoutExercise(models.Model):
+    workout_plan = models.ForeignKey(WorkoutPlan, related_name='workout_exercises', on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    sets = models.IntegerField(default=0)
+    repetitions = models.IntegerField(default=0)
+    duration = models.IntegerField(blank=True, null=True)  # Optional, in seconds for timed exercises
+
+    def __str__(self):
+        return f"{self.exercise.name} - {self.sets} sets of {self.repetitions}"
