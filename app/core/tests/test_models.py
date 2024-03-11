@@ -30,7 +30,8 @@ class ModelTests(TestCase):
             ['test4@example.COM', 'test4@example.com'],
         ]
         for email, expected in sample_emails:
-            user = get_user_model().objects.create_user(email, 'sample123')
+            user = \
+                get_user_model().objects.create_user(email, 'sample123')
             self.assertEqual(user.email, expected)
 
     def test_new_user_without_email_raises_error(self):
@@ -112,7 +113,8 @@ class WorkoutPlanModelTests(TestCase):
             goal='Increase muscle strength',
             session_duration=60
         )
-        self.assertEqual(str(workout_plan), f'{workout_plan.title} - {self.user.email}')
+        self.assertEqual(str(workout_plan),
+                         f'{workout_plan.title} - {self.user.email}')
 
     def test_workout_plan_fields(self):
         """Test creating a workout plan with specific fields."""
@@ -164,7 +166,8 @@ class WorkoutExerciseModelTests(TestCase):
             repetitions=10,
             duration=120
         )
-        self.assertEqual(str(workout_exercise), f'{self.exercise.name} - 4 sets of 10')
+        self.assertEqual(str(workout_exercise),
+                         f'{self.exercise.name} - 4 sets of 10')
 
     def test_workout_exercise_fields(self):
         """Test creating a workout exercise with specific fields."""

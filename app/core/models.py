@@ -17,7 +17,8 @@ class UserManager(BaseUserManager):
         """Create, save and return a new user."""
         if not email:
             raise ValueError('User must have an email address.')
-        user = self.model(email=self.normalize_email(email), **extra_fields)
+        user = self.model(email=self.normalize_email(email),
+                          **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
@@ -55,31 +56,38 @@ class Exercise(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     instructions = models.TextField()
-    target_muscles = models.ManyToManyField(MuscleGroup,
-                                            related_name='exercises')
+    target_muscles = models.ManyToManyField(
+        MuscleGroup, related_name='exercises')
 
     def __str__(self):
         return self.name
 
 
 class WorkoutPlan(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='workout_plans')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,
+                             related_name='workout_plans')
     title = models.CharField(max_length=255)
-    frequency = models.IntegerField(help_text='Number of workouts per week')
+    frequency = models.IntegerField(
+        help_text='Number of workouts per week')
     goal = models.TextField(blank=True, null=True)
-    session_duration = models.IntegerField(help_text='Duration of each workout session in minutes')
-    # Total duration in minutes per session
+    session_duration = \
+        models.IntegerField(help_text='Duration of each workout'
+                                      ' session in minutes')
 
     def __str__(self):
         return f"{self.title} - {self.user.email}"
 
 
 class WorkoutExercise(models.Model):
-    workout_plan = models.ForeignKey(WorkoutPlan, related_name='workout_exercises', on_delete=models.CASCADE)
+    workout_plan = models.ForeignKey(WorkoutPlan,
+                                     related_name='workout_exercises',
+                                     on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     sets = models.IntegerField(default=0)
     repetitions = models.IntegerField(default=0)
-    duration = models.IntegerField(blank=True, null=True)  # Optional, in seconds for timed exercises
+    duration = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.exercise.name} - {self.sets} sets of {self.repetitions}"
+        return f"{self.exercise.name} -" \
+               f" {self.sets} sets of {self.repetitions}"

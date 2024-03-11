@@ -20,7 +20,7 @@ def muscle_group_url():
 
 def exercise_url():
     """Return URL for exercises"""
-    return reverse('exercise-list')
+    return reverse('fitness-exercise-list')  # Update based on new 'basename'
 
 
 def muscle_group_detail_url(muscle_group_id):
@@ -30,7 +30,7 @@ def muscle_group_detail_url(muscle_group_id):
 
 def exercise_detail_url(exercise_id):
     """Return exercise detail URL"""
-    return reverse('exercise-detail', args=[exercise_id])
+    return reverse('fitness-exercise-detail', args=[exercise_id])
 
 
 class PublicApiTests(TestCase):
