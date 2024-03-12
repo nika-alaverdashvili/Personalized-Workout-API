@@ -20,7 +20,7 @@ def muscle_group_url():
 
 def exercise_url():
     """Return URL for exercises"""
-    return reverse('fitness-exercise-list')  # Update based on new 'basename'
+    return reverse('fitness-exercise-list')
 
 
 def muscle_group_detail_url(muscle_group_id):
@@ -108,8 +108,8 @@ class AdminApiTests(TestCase):
         exercise = Exercise.objects.get(id=res.data['id'])
         associated_muscle_groups = exercise.target_muscles.all()
 
-        print("Expected Muscle Group:", self.muscle_group)
-        print("Associated Muscle Groups:", associated_muscle_groups)
+        # print("Expected Muscle Group:", self.muscle_group)
+        # print("Associated Muscle Groups:", associated_muscle_groups)
 
         self.assertIn(self.muscle_group, associated_muscle_groups)
 
