@@ -1,6 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiExample,
+    OpenApiTypes,
+)
 
 from rest_framework.permissions import IsAuthenticated
 from core.models import Exercise,\
@@ -17,6 +22,68 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+@extend_schema_view(
+    create=extend_schema(
+        description="Create a new Workout Plan.",
+        request=OpenApiTypes.OBJECT,
+        examples=[
+            OpenApiExample(
+                name="Create Workout Plan Example",
+                summary="Example create request",
+                value={
+                    "user": 0,
+                    "title": "Beginner Fitness Plan",
+                    "frequency": 3,
+                    "goal": "Lose weight",
+                    "session_duration": 60,
+                    "create_workout_exercises": []
+                },
+                request_only=True,
+            ),
+        ],
+        responses={201: WorkoutPlanSerializer},
+    ),
+    update=extend_schema(
+        description="Update an existing Workout Plan.",
+        request=OpenApiTypes.OBJECT,
+        examples=[
+            OpenApiExample(
+                name="Update Workout Plan Example",
+                summary="Example update request",
+                value={
+                    "user": 0,
+                    "title": "Advanced Fitness Plan",
+                    "frequency": 5,
+                    "goal": "Build muscle",
+                    "session_duration": 90,
+                    "create_workout_exercises": []
+                },
+                request_only=True,
+            ),
+        ],
+        responses={200: WorkoutPlanSerializer},
+    ),
+    partial_update=extend_schema(
+        description="Partially update an existing Workout Plan.",
+        request=OpenApiTypes.OBJECT,
+        examples=[
+            OpenApiExample(
+                name="Partial Update Workout Plan Example",
+                summary="Example partial update request",
+                value={
+                    "user": 0,
+                    "title": "Advanced Fitness Plan",
+                    "frequency": 5,
+                    "goal": "Build muscle",
+                    "session_duration": 90,
+                    "create_workout_exercises": []
+                },
+                request_only=True,
+            ),
+        ],
+        responses={200: WorkoutPlanSerializer},
+    )
+)
 class WorkoutPlanViewSet(viewsets.ModelViewSet):
     queryset = WorkoutPlan.objects.all()
     serializer_class = WorkoutPlanSerializer
