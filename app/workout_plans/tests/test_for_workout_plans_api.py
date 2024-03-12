@@ -1,5 +1,6 @@
-# workout_plans/tests/test_api.py
-
+"""
+Tests for the workout_plans API.
+"""
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status

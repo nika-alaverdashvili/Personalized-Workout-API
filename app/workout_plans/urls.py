@@ -1,5 +1,6 @@
-# workout_plans/urls.py
-
+"""
+URL mappings for the workout_plans API.
+"""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from workout_plans import views

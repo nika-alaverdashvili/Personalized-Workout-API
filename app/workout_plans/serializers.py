@@ -1,3 +1,6 @@
+"""
+Serializers for the workout_plans API View.
+"""
 from rest_framework import serializers
 from core.models import Exercise, WorkoutPlan,\
     WorkoutExercise, MuscleGroup
