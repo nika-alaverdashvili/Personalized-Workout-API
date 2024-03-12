@@ -1,9 +1,15 @@
 """
 Tests for models.
 """
+from decimal import Decimal
+from datetime import date
+
+from django.db import IntegrityError
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from core.models import MuscleGroup, Exercise, WorkoutPlan, WorkoutExercise
+from core.models import MuscleGroup, Exercise, WorkoutPlan,\
+    WorkoutExercise, FitnessProgress
 
 
 class ModelTests(TestCase):
@@ -183,3 +189,61 @@ class WorkoutExerciseModelTests(TestCase):
         self.assertEqual(workout_exercise.sets, 3)
         self.assertEqual(workout_exercise.repetitions, 12)
         self.assertEqual(workout_exercise.duration, 90)
+
+
+class FitnessProgressModelTests(TestCase):
+
+    def setUp(self):
+        """Set up for testing FitnessProgress model."""
+        self.user = get_user_model().objects.create_user(
+            email='user3@example.com',
+            password='testpass123'
+        )
+
+    def test_fitness_progress_str(self):
+        """Test the fitness progress string representation."""
+        fitness_progress = FitnessProgress.objects.create(
+            user=self.user,
+            date=date(2022, 1, 1),
+            weight=Decimal('180.00'),
+            goal_weight=Decimal('160.00'),
+            achieved_goals='Run 5km without stopping',
+            notes='Felt great after the run.'
+        )
+        self.assertEqual(str(fitness_progress),
+                         f'2022-01-01 - {self.user.email}')
+
+    def test_fitness_progress_fields(self):
+        """Test creating a fitness progress
+        record with specific fields."""
+        fitness_progress = FitnessProgress.objects.create(
+            user=self.user,
+            date=date(2022, 2, 1),
+            weight=Decimal('178.00'),
+            goal_weight=Decimal('155.00'),
+            achieved_goals='Completed first half-marathon',
+            notes='Need to improve hydration next time.'
+        )
+        self.assertEqual(fitness_progress.user, self.user)
+        self.assertEqual(fitness_progress.date, date(2022, 2, 1))
+        self.assertEqual(fitness_progress.weight, Decimal('178.00'))
+        self.assertEqual(fitness_progress.goal_weight, Decimal('155.00'))
+        self.assertEqual(fitness_progress.achieved_goals,
+                         'Completed first half-marathon')
+        self.assertEqual(fitness_progress.notes,
+                         'Need to improve hydration next time.')
+
+    def test_fitness_progress_unique_user_date(self):
+        """Test that FitnessProgress enforces
+         unique user and date combinations."""
+        FitnessProgress.objects.create(
+            user=self.user,
+            date=date(2022, 3, 1),
+            weight=Decimal('175.00')
+        )
+        with self.assertRaises(IntegrityError):
+            FitnessProgress.objects.create(
+                user=self.user,
+                date=date(2022, 3, 1),
+                weight=Decimal('174.00')
+            )

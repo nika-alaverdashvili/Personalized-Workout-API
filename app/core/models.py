@@ -91,3 +91,24 @@ class WorkoutExercise(models.Model):
     def __str__(self):
         return f"{self.exercise.name} -" \
                f" {self.sets} sets of {self.repetitions}"
+
+
+class FitnessProgress(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    date = models.DateField()
+    weight = models.DecimalField(max_digits=6, decimal_places=2)
+    goal_weight = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True)
+    achieved_goals = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    exercise_duration = models.IntegerField(null=True, blank=True)
+    calories_burned = models.IntegerField(null=True, blank=True)
+    mood = models.CharField(max_length=50, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-date']
+        unique_together = ('user', 'date')
+
+    def __str__(self):
+        return f"{self.date} - {self.user.email}"
